@@ -1,8 +1,77 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model HomeIndexViewModel
+<head>
+    <link rel="stylesheet" href="~/css/featured-products.css" />
+</head>
+<div class="container-fluid bg-light py-3">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 text-primary mb-3">Welcome to VintiStore 🛍️</h1>
+                <p class="lead text-muted">Discover Unique Treasures, Curated Just for You</p>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+                <!-- Search Bar -->
+                <form asp-controller="Products" asp-action="Search" method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="search" name="query" class="form-control"
+                               placeholder="Search for products..."
+                               aria-label="Search products">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-6 text-end">
+                <img src="/images/shopping-illustration.svg" alt="Shopping Illustration" class="img-fluid" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Categorías -->
+        <div class="col-md-3">
+            <h3>Categories</h3>
+            <div class="list-group">
+                @foreach (var category in Model.Categories)
+                {
+                    <a asp-controller="Products" asp-action="Category" asp-route-categoryId="@category.CategoryId"
+                       class="list-group-item list-group-item-action">
+                        @category.Name
+                    </a>
+                }
+            </div>
+        </div>
+        <!-- Productos destacados -->
+        <div class="col-md-9">
+            <h3>Featured Products</h3>
+            <div class="row g-3">
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <img src="@product.ImagePath"
+                                 class="card-img-top object-fit-cover"
+                                 alt="@product.Name"
+                                 style="height: 250px;">
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text mt-auto">$@product.Price</p>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <a asp-controller="Cart" asp-action="AddToCart"
+                                       asp-route-productId="@product.ProductId"
+                                       class="btn btn-primary btn-sm">Add to Cart</a>
+                                    <a asp-controller="Products" asp-action="ProductDetails"
+                                       asp-route-id="@product.ProductId"
+                                       class="btn btn-outline-secondary btn-sm">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineShopMVC.Data;
 using OnlineShopMVC.Models;
@@ -7,7 +8,7 @@ using System.IO;
 
 namespace OnlineShopMVC.Controllers
 {
-
+    
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
@@ -17,14 +18,14 @@ namespace OnlineShopMVC.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Products
                 .Include(p => p.Category)
                 .ToListAsync());
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,7 +44,7 @@ namespace OnlineShopMVC.Controllers
 
             return View(product);
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewBag.Categories = _context.Categories.ToList();
@@ -52,6 +53,7 @@ namespace OnlineShopMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
@@ -101,6 +103,7 @@ namespace OnlineShopMVC.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -120,6 +123,7 @@ namespace OnlineShopMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, Product product)
         {
             if (id != product.ProductId)
@@ -201,6 +205,7 @@ namespace OnlineShopMVC.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -222,6 +227,7 @@ namespace OnlineShopMVC.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -243,11 +249,13 @@ namespace OnlineShopMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.ProductId == id);
         }
 
+        [Authorize(Roles = "Admin")]
         // Método para validar archivos de imagen
         private bool ValidateImageFile(IFormFile file)
         {
@@ -262,6 +270,7 @@ namespace OnlineShopMVC.Controllers
             return allowedExtensions.Contains(extension);
         }
 
+        [Authorize(Roles = "Admin")]
         // Método para eliminar archivo de imagen
         private void DeleteImageFile(string imagePath)
         {
@@ -272,6 +281,59 @@ namespace OnlineShopMVC.Controllers
             {
                 System.IO.File.Delete(fullPath);
             }
+        }
+
+        ///
+        /// CATEGORY FILTERING
+        /// 
+        public async Task<IActionResult> Category(int categoryId)
+        {
+            var productsInCategory = await _context.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Include(p => p.Category)
+                .ToListAsync();
+
+            ViewBag.CategoryName = _context.Categories.Find(categoryId)?.Name;
+            return View(productsInCategory);
+        }
+
+
+        //Product Details from Client View
+
+        public async Task<IActionResult> ProductDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(m => m.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        public IActionResult Search(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var searchResults = _context.Products
+                .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
+                .ToList();
+
+            var viewModel = new SearchResultViewModel
+            {
+                Query = query,
+                Products = searchResults
+            };
+
+            return View(viewModel);
         }
     }
 }

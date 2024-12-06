@@ -31,3 +31,86 @@ body {
 .page-default {
     min-height: calc(100vh - 150px);
 }
+
+
+
+/*Estilos de detalle de product*/
+/* Estilos específicos para la página de detalles del producto */
+.product-details-container {
+    margin-top: 2rem;
+}
+
+/* Imagen responsiva con tamaño máximo definido */
+.product-details-image {
+    border-radius: 15px;
+    width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
+    max-height: 600px; /* Controla la altura máxima */
+    object-fit: contain; /* Ajusta las proporciones sin recortar */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa; /* Fondo gris claro para destacar */
+    padding: 10px; /* Espaciado interno */
+}
+
+/* Tarjeta general */
+.product-details-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+    /* Título */
+    .product-details-card h2 {
+        font-size: 2.5rem;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+/* Precio */
+.product-details-price {
+    font-size: 1.8rem;
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Stock */
+.product-details-stock {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+    .product-details-stock .badge {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+    }
+
+/* Botón Agregar al Carrito */
+.product-details-add-to-cart {
+    font-size: 1.3rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+    width: 100%;
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .product-details-add-to-cart:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+/* Botón Volver */
+.product-details-back {
+    font-size: 1.1rem;
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.product-details-back:hover {
+    color: #343a40;
+    text-decoration: underline;
+}

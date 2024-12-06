@@ -1,0 +1,89 @@
+﻿/* Contenedor de toda la sección de productos */
+.featured-products-container {
+    margin-top: 2rem;
+}
+
+/* Card personalizado */
+.featured-product-card {
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .featured-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+/* Imagen del producto */
+.featured-product-image {
+    width: 100%;
+    height: 250px; /* Altura uniforme para todas las imágenes */
+    object-fit: cover; /* Asegura que las imágenes se ajusten sin deformarse */
+    background-color: #f8f9fa; /* Fondo claro para imágenes pequeñas o transparentes */
+}
+
+/* Título del producto */
+.featured-product-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+/* Descripción del producto */
+.featured-product-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    height: 2rem; /* Altura fija para mantener consistencia */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Mantener una sola línea */
+}
+
+/* Precio */
+.featured-product-price {
+    font-size: 1rem;
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Botones */
+.featured-product-buttons {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+    .featured-product-buttons a {
+        flex: 1;
+    }
+
+.featured-product-add-to-cart {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .featured-product-add-to-cart:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+.featured-product-details {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+    .featured-product-details:hover {
+        background-color: #343a40;
+    }

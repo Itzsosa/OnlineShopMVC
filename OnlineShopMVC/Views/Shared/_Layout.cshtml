@@ -28,12 +28,6 @@
                         @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Search Routes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Reservations</a>
-                            </li>
-                            <li class="nav-item">
                                 <!-- Opción del carrito de compras en el menú -->
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
                                     <i class="bi bi-cart3"></i> Cart
