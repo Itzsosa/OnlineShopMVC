@@ -1,0 +1,36 @@
+﻿@model OnlineShopMVC.Models.Category
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div>
+            <h1>Delete</h1>
+
+            <h3>Are you sure you want to delete this?</h3>
+            <h4>Categories</h4>
+            <hr/>
+            <dl class="row">
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="CategoryId"/>
+                <input type="submit" value="Delete" class="btn btn-danger"/> |
+                <a asp-action="Index">Back to List</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+

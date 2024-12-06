@@ -20,3 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.page-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 150px);
+}
+
+.page-default {
+    min-height: calc(100vh - 150px);
+}
