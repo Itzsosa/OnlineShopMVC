@@ -155,18 +155,49 @@ namespace OnlineShopMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Username,Email,PasswordHash,FirstName,LastName,PhoneNumber,UserRole,CreatedAt")] User user)
+        public async Task<IActionResult> Create([Bind("Username,Email,PasswordHash,FirstName,LastName,PhoneNumber")] User user)
         {
+            // Check if a user with the same email or username already exists
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == user.Email || u.Username == user.Username);
+
+            if (existingUser != null)
+            {
+                if (existingUser.Email == user.Email)
+                {
+                    ModelState.AddModelError("Email", "The email is already registered.");
+                }
+
+                if (existingUser.Username == user.Username)
+                {
+                    ModelState.AddModelError("Username", "The username is already taken.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                // Set default values similar to register method
+                user.CreatedAt = DateTime.Now;
+                user.UserRole = "Cliente"; // Assuming you want to keep this default role
+
+                // Hash the password
+                user.PasswordHash = _passwordHasher.HashPassword(user, user.PasswordHash);
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+
+                // Optional: Add a success message
+                TempData["SuccessMessage"] = "User created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
+
+            // If we got this far, something failed, redisplay form
             return View(user);
         }
 
         // GET: Users/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -179,7 +210,16 @@ namespace OnlineShopMVC.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+
+            // Map User to UserEditViewModel
+            var viewModel = new UserEditViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            return View(viewModel);
         }
 
         // POST: Users/Edit/5
@@ -187,9 +227,10 @@ namespace OnlineShopMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Email,PasswordHash,FirstName,LastName,PhoneNumber,UserRole,CreatedAt")] User user)
+        public async Task<IActionResult> Edit(int id, UserEditViewModel viewModel)
         {
-            if (id != user.UserId)
+            var existingUser = await _context.Users.FindAsync(id);
+            if (existingUser == null)
             {
                 return NotFound();
             }
@@ -198,23 +239,29 @@ namespace OnlineShopMVC.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    // Only update fields that are provided
+                    if (!string.IsNullOrWhiteSpace(viewModel.FirstName))
+                        existingUser.FirstName = viewModel.FirstName;
+
+                    if (!string.IsNullOrWhiteSpace(viewModel.LastName))
+                        existingUser.LastName = viewModel.LastName;
+
+                    if (!string.IsNullOrWhiteSpace(viewModel.PhoneNumber))
+                        existingUser.PhoneNumber = viewModel.PhoneNumber;
+
+                    _context.Update(existingUser);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "User profile updated successfully.";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the profile.");
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(user);
+
+            return View(viewModel);
         }
 
         // GET: Users/Delete/5
