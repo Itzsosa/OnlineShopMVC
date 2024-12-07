@@ -22,6 +22,7 @@ namespace OnlineShopMVC.Controllers
             _context = context;
             _cartService = cartService;
         }
+
         public async Task<IActionResult> Index()
         {
             // Extract user ID from claims

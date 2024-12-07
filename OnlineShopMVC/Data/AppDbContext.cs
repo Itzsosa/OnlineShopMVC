@@ -10,11 +10,12 @@ namespace OnlineShopMVC.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<OnlineShopMVC.Models.Category> Categories { get; set; } = default!;
-        public DbSet<OnlineShopMVC.Models.Product> Products { get; set; } = default!;
-        public DbSet<OnlineShopMVC.Models.Cart> Cart { get; set; } = default!;
-        public DbSet<OnlineShopMVC.Models.CartItem> CartItems { get; set; } = default!;
-
+        public DbSet<Category> Categories { get; set; } = default!;
+        public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<Cart> Cart { get; set; } = default!;
+        public DbSet<CartItem> CartItems { get; set; } = default!;
+        public DbSet<Order> Orders { get; set; } = default!;
+        public DbSet<OrderDetail> OrderDetails { get; set; } = default!;
 
     }
 }
