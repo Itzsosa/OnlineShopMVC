@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/OnlineShopMVC.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -29,8 +30,8 @@
                         {
                             <li class="nav-item">
                                 <!-- Opción del carrito de compras en el menú -->
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
-                                    <i class="bi bi-cart3"></i> Cart
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="YourOrders">
+                                    <i class="bi bi-cart3"></i> Orders
                                 </a>
                             </li>
                         }
@@ -62,8 +63,10 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
                             </li>
-                            <a href="@Url.Action("Index", "Cart")" class="btn btn-primary">
+
+                            <a href="@Url.Action("Index", "Carts")" class="btn btn-primary position-relative">
                                 <i class="bi bi-cart3"></i>
+                                @await Component.InvokeAsync("CartItemCount")
                             </a>
                         }
                         else
@@ -102,5 +105,47 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-</body>
+    
+    <script>
+        async function updateCartCount() {
+            try {
+                const response = await fetch('@Url.Action("GetCartItemCount", "Carts")');
+                const count = await response.json();
+
+                const cartCountElement = document.getElementById('cartItemCount');
+                if (cartCountElement) {
+                    cartCountElement.textContent = count;
+                    cartCountElement.classList.toggle('d-none', count === 0);
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+
+        // Update cart count after adding to cart
+        document.addEventListener('DOMContentLoaded', () => {
+            const addToCartForms = document.querySelectorAll('form[action*="AddToCart"]');
+            addToCartForms.forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: new FormData(form)
+                        });
+
+                        if (response.ok) {
+                            await updateCartCount();
+                            // Redirect or handle success
+                            window.location.href = form.getAttribute('data-return-url') || '@Url.Action("Index", "Home")';
+                        }
+                    } catch (error) {
+                        console.error('Error adding to cart:', error);
+                    }
+                });
+            });
+        });
+    </script>
+    </body>
 </html>

@@ -5,7 +5,6 @@ using OnlineShopMVC.Data;
 using OnlineShopMVC.Models;
 using System.IO;
 
-
 namespace OnlineShopMVC.Controllers
 {
     
@@ -18,6 +17,7 @@ namespace OnlineShopMVC.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -25,6 +25,7 @@ namespace OnlineShopMVC.Controllers
                 .Include(p => p.Category)
                 .ToListAsync());
         }
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {

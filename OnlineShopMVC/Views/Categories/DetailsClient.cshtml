@@ -1,0 +1,127 @@
+﻿@model OnlineShopMVC.ViewModels.CategoryDetailsViewModel
+
+<div class="container-fluid bg-light py-3">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <!-- Search Bar -->
+                <form asp-controller="Products" asp-action="Search" method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="search" name="query" class="form-control"
+                               placeholder="Search for products..."
+                               aria-label="Search products">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Categorías -->
+        <div class="col-md-3">
+            <h3>Categories</h3>
+            <div class="list-group">
+                @foreach (var category in Model.Categories)
+                {
+                    <a asp-controller="Categories" asp-action="DetailsClient" asp-route-categoryId="@category.CategoryId"
+                       class="list-group-item list-group-item-action @(category.CategoryId == Model.Category.CategoryId ? "active" : "")">
+                        @category.Name
+                    </a>
+                }
+            </div>
+        </div>
+
+        <!-- Productos de la categoría -->
+        <div class="col-md-9">
+            <h2 class="mb-4">@Model.Category.Name Products</h2>
+
+            @if (Model.Products.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var product in Model.Products)
+                    {
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="@product.ImagePath"
+                                     class="card-img-top object-fit-cover"
+                                     alt="@product.Name"
+                                     style="height:275px">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@product.Name</h5>
+                                    <p class="card-text">@product.Description</p>
+                                    <p class="card-text mt-auto">$@product.Price</p>
+                                    <div class="d-flex mt-2">
+                                        <form asp-controller="Carts" asp-action="AddToCart" method="post">
+                                            <input type="hidden" name="productId" value="@product.ProductId" />
+                                            <input type="hidden" name="returnUrl" value="@Url.Action("DetailsClient", "Categories", new { categoryId = Model.Category.CategoryId })" />
+                                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                                        </form>
+                                        <a asp-controller="Products" asp-action="ProductDetails"
+                                           asp-route-id="@product.ProductId"
+                                           class="btn btn-outline-secondary btn-sm mx-2">Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No products found in this category.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showToast(message, type = 'success') {
+            const toastElement = document.getElementById('addToCartToast');
+            const toastMessageElement = document.getElementById('toastMessage');
+            const toastHeaderElement = toastElement.querySelector('.toast-header');
+            
+            // Reset classes
+            toastHeaderElement.classList.remove('bg-success', 'bg-danger');
+            
+            // Set toast type
+            if (type === 'success') {
+                toastHeaderElement.classList.add('bg-success');
+            } else {
+                toastHeaderElement.classList.add('bg-danger');
+            }
+            
+            // Set the message
+            toastMessageElement.textContent = message;
+            
+            // Create a new Bootstrap Toast instance
+            const toast = new bootstrap.Toast(toastElement);
+            
+            // Show the toast
+            toast.show();
+        }
+
+        // Check for success or error messages
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                showToast('@Html.Raw(TempData["SuccessMessage"])', 'success');
+                </text>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                showToast('@Html.Raw(TempData["ErrorMessage"])', 'error');
+                </text>
+            }
+        });
+    </script>
+}

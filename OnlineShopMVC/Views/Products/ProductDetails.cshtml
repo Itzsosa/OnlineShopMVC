@@ -41,8 +41,9 @@
                     </div>
 
                     <!-- Botón Agregar al Carrito -->
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                    <form asp-controller="Carts" asp-action="AddToCart" method="post">
                         <input type="hidden" name="productId" value="@Model.ProductId" />
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
                         <button type="submit" class="btn product-details-add-to-cart">
                             <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OnlineShopMVC.Data;
 using OnlineShopMVC.Models;
+using OnlineShopMVC.ViewModels;
 
 namespace OnlineShopMVC.Controllers
 {
@@ -122,6 +123,28 @@ namespace OnlineShopMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> DetailsClient(int categoryId)
+        {
+            var category = await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new CategoryDetailsViewModel
+            {
+                Category = category,
+                Products = category.Products.ToList(),
+                Categories = await _context.Categories.ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // GET: Categories/Delete/5
